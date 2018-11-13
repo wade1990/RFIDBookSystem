@@ -1,0 +1,44 @@
+1，表结构
+a：借阅表 borrowdata    date bookuid bookid bookname username userid useruid status
+b：用户表 userdata      date uid userid username
+c：图书管理表 bookdata  date bookuid bookname bookid
+
+
+
+2，流程
+
+a：录入学生id 姓名----写入卡中姓名，将id，uid，姓名信息保存在数据库中userdata
+b：录入图书，绑定书名和uid-----写入卡中图书姓名，将uid，id，书名保存在数据库中bookdata
+c：借阅图书
+   1. 扫描id，读取学生uid和姓名，通过uid查询userdate中的userid
+   2. 扫描图书，读取图书uid和name，通过uid查询bookdata表中bookid
+   3. 查询borrowdata中是否有借阅记录，如果有，将status设置为1，执行第5步，如果没有，执行第4步。
+   4. 自动录入，bookid，bookuid，bookname，username，userid，useruid，status制1
+   5. 返回借过该图书的记录，返回成功，有退出按钮，退出返回首页
+
+d：归还图书
+   1. 扫描id，读取学生uid和姓名，通过uid查询userdate中的userid
+   2. 扫描图书，读取图书uid和name，通过uid查询bookdata表中bookid
+   3. 查询borrowdata中是否有借阅记录，如果有，将status设置为0，执行第5步，如果没有，执行第4步。
+   4. 返回归还失败，查询borrowdata中数据并显示出来。====退出按钮，退出返回首页
+   5. 返回借过该图书的记录，归还成功，有退出按钮，退出返回首页
+
+c：查询借阅记录
+   1，人
+   2，id
+   3，图书
+   4，图书id
+   5，已经借阅
+   6，已经归还
+   7，all
+
+
+d：查询用户
+   1，user
+   2，id
+   3，all
+
+e：查询图书
+   1，bookid
+   2，bookname
+   3，all
