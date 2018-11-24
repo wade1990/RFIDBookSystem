@@ -32,10 +32,8 @@ class BorrowBook(object):
         self.startBowstop.grid(row=1, column=1,stick=E)
         Button(self.page, text="退出", command=self.stopBorrow).grid(row=10, column=1,stick=E)
         Button(self.page, text="继续", command=self.borrowcontinue).grid(row=10, stick=W, pady=10)
-
-
-
-    def startBorrow(self):
+        self.b3 = Button(self.page, text="查询", command=self.query)
+        self.b3.grid(row=11, stick=W, pady=10)
         Label(self.page, text='用户ID').grid(row=2, stick=W, pady=10)
 
         Label(self.page, text='用户姓名').grid(row=3, stick=W, pady=10)
@@ -45,6 +43,11 @@ class BorrowBook(object):
         Label(self.page, text='图书书名').grid(row=5, stick=W, pady=10)
         self.text = Text(self.page, height=6, width=60)
         self.text.grid(row=7, rowspan=3, columnspan=2, stick=E, pady=10)
+
+
+    def startBorrow(self):
+
+
         taguseridcard = 1
         tagbookcard =1
         while(taguseridcard):
@@ -80,7 +83,8 @@ class BorrowBook(object):
                 select = "select BOOKID from books where UID=%s" % str(bookcarduid)
                 result = self.ttbls.queryall("books", select)
                 Label(self.page, text=str(tuple(result)[0][0])).grid(row=4, column=1, stick=E)
-                Label(self.page, text=bookcardtext.replace(" ", "")).grid(row=5, column=1, stick=E)
+                self.r2 = Label(self.page, text=bookcardtext.replace(" ", ""))
+                self.r2.grid(row=5, column=1, stick=E)
             else:
                 print "Read Failure, after 2 seconds, pls use id card and retry"
                 self.text.insert(1.0, "请使用图书RFID卡重试\n")
@@ -121,6 +125,7 @@ class BorrowBook(object):
         self.root.destroy()
 
     def borrowcontinue(self):
+        self.text.delete(0.0, END)
         tagbookcard = 1
         while (tagbookcard):
             self.text.insert(1.0, "请扫描图书RFID卡\n")
@@ -134,7 +139,11 @@ class BorrowBook(object):
                 select = "select BOOKID from books where UID=%s" % str(bookcarduid)
                 result = self.ttbls.queryall("books", select)
                 Label(self.page, text=str(tuple(result)[0][0])).grid(row=4, column=1, stick=E)
-                Label(self.page, text=bookcardtext.replace(" ", "")).grid(row=5, column=1, stick=E)
+                self.r2.grid_forget()
+                self.page.update()
+                self.r2.config(text=bookcardtext.replace(" ", ""))
+                self.r2.grid(row=5, column=1, stick=E)
+                self.page.update()
             else:
                 print "Read Failure, after 2 seconds, pls use id card and retry"
                 self.text.insert(1.0, "请使用图书RFID卡重试\n")
@@ -144,6 +153,7 @@ class BorrowBook(object):
         (status, result) = self.ttbls.writeBorrowlists(self.idcarduid, self.idcardtext, bookcarduid, bookcardtext)
         if status == 0:
             self.text.insert(1.0, "借书成功\n")
+            self.page.update()
             for i in result:
                 a = str(tuple(i)).replace("u'", "'").decode('unicode-escape')
             self.text.insert(1.0, a)
@@ -163,6 +173,13 @@ class BorrowBook(object):
             self.text.insert(1.0, "借书失败，借书数据已经存在，id=%s, name=%s 正在借阅此书\n" % (userid, username))
         self.text.insert(1.0, "如果想继续借书，请点击继续按钮\n")
 
+
+    def query(self):
+        select = "select * from borrowlists"
+        self.text.delete(0.0, END)
+        rowl = self.ttbls.queryall("borrowlists", select)
+        for i in rowl:
+            self.text.insert(END, "%s\n" % str(tuple(i)).replace("u'", "'").decode("unicode-escape"))
 
 
 
