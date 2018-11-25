@@ -89,7 +89,7 @@ class ServiceAdapter():
                     .replace(")", "") \
                     .decode('unicode-escape')
             msg = "借书失败，借书数据已经存在，id=%s, name=%s 正在借阅此书\n" % (userid, username)
-            return self.fail, None, msg
+            return self.fail, rows, msg
 
     def rfidReturnBooks(self, idcarduid, bookcarduid):
         (status, userid) = self.returnBooks.writeBorrowlistsReturn(idcarduid, bookcarduid)
@@ -97,7 +97,7 @@ class ServiceAdapter():
             msg = "还书失败，数据库无此书借阅记录，请联系管理员"
             return self.fail, msg
         if status == 1:
-            return self.success, None
+            return self.success, userid
         if status == 2:
             msg = "还书失败，本书目前被ID=%d同学借阅\n" % userid
             return self.fail, msg
@@ -115,6 +115,9 @@ class ServiceAdapter():
             for i in rowl:
                 result = "%s\n%s" % (result, str(tuple(i)).replace("u'", "'").decode("unicode-escape"))
             return self.success, result, None
+
+    def upddate(self, tablename, update):
+        self.borrowbooks.update(tablename, update)
 
     def destroy(self):
         self.returnBooks.databaseClose()

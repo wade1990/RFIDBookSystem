@@ -82,8 +82,12 @@ def receiveString(rec):
         print "bookcarduid = %s" % bookcarduid
         print "bookcardtext = %s" % bookcardtext
         (status, rows, msg) = serviceAdapter.rfidBorrowBooks(idcarduid, idcardtext, bookcarduid, bookcardtext)
+
+
+        id = (str(rows).split(","))[0].replace("[","").replace("(","")
+        #print id
         if status == "success":
-            return "e|success|"
+            return "e|success|%s|" % id
         if status == "fail":
             return "e|fail|%s|" % msg
 
@@ -93,7 +97,8 @@ def receiveString(rec):
         bookcarduid = result[2]
         (status, msg) = serviceAdapter.rfidReturnBooks(idcarduid, bookcarduid)
         if status == "success":
-            return "f|success|"
+            print "bt: ID= " + msg
+            return "f|success|%s|" % msg
         if status == "fail":
             return "f|fail|%s|" % msg
 
@@ -109,6 +114,14 @@ def receiveString(rec):
 
     if result[0] == 'h':
         serviceAdapter.destroy()
+
+    if result[0] == "i":
+        tablename = result[1]
+        update = result[2]
+        #update = "update %s set msg where ID=%s;" % (tablename, id)
+        print update
+        serviceAdapter.upddate(tablename, update)
+
 
     return str(result[0])
  

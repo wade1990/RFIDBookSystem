@@ -78,10 +78,26 @@ class ISsql:
             d = self.cur.execute(select)
             result = d.fetchall()
             print "query success"
+            #print result
             return result
         else:
             print "select fail, table is not exist."
             return self.SQL_FAILED
+
+    def update(self, tablename, update):
+        if (self.tableIsExist(tablename)):
+            print type(update)
+            print len(update)
+            print "**" + update + "**"
+            self.cur.execute(update)
+            self.conn.commit()
+            #result = d.fetchall()
+            #print "query success"
+            #print result
+            #return result
+        else:
+            print "select fail, table is not exist."
+            #return self.SQL_FAILED
 
     def selectDataByOneCount(self, tablename, columnname, data):
         #print type(data)
